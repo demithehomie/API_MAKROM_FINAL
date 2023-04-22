@@ -6,11 +6,18 @@
   </head>
   <body>
     <h1>Confirme Seu Email</h1>
-    <p>Olá {{username}},</p>
+    <p>Olá {{user}}</p>
     <p>Por favor, clique no botão abaixo para confirmar seu email e ativar sua conta na COOPEERE:</p>
-    <a href="{{confirmationLink}}" target="_blank" style="display: inline-block; background-color: #4285F4; color: #fff; text-decoration: none; font-weight: bold; padding: 10px 20px; border-radius: 5px;">Confirmar Email</a>
+    <a href="{{code}}" target="_blank" style="display: inline-block; background-color: #4285F4; color: #fff; text-decoration: none; font-weight: bold; padding: 10px 20px; border-radius: 5px;">Confirmar Email</a>
+
     <p>Se você não solicitou essa confirmação de email, por favor ignore este email.</p>
     <p>Obrigado,</p>
     <p>A equipe COOPEERE</p>
+    
+    <script>
+      function copyToClipboard(text) {
+        window.open("data:text/plain;charset=utf-8," + encodeURIComponent(text));
+      }
+    </script>
   </body>
 </html>

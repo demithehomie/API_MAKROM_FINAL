@@ -20,33 +20,41 @@ export class MailingService {
       this.configService.get('CLIENT_SECRET'),
       'https://developers.google.com/oauthplayground',
     );
-
+   
     oauth2Client.setCredentials({
       refresh_token: process.env.REFRESH_TOKEN,
     });
-
-    const accessToken: string = await new Promise((resolve, reject) => {
-      oauth2Client.getAccessToken((err, token) => {
-        if (err) {
-          reject('Failed to create access token');
-        }
-        resolve(token);
+  
+    try {
+      const accessToken: string = await new Promise((resolve, reject) => {
+        oauth2Client.getAccessToken((err, token) => {
+          if (err) {
+            reject(new Error(`Failed to create access token: ${err.message}`));
+          }
+          resolve(token);
+        });
       });
-    });
-
-    const config: Options = {
-      service: 'gmail',
-      auth: {
-        type: 'OAuth2',
-        user: this.configService.get('EMAIL'),
-        clientId: this.configService.get('CLIENT_ID'),
-        clientSecret: this.configService.get('CLIENT_SECRET'),
-        accessToken,
-      },
-    };
-    this.mailerService.addTransporter('gmail', config);
+  
+       const config: Options = {
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: this.configService.get('EMAIL'),
+          clientId: this.configService.get('CLIENT_ID'),
+          clientSecret: this.configService.get('CLIENT_SECRET'),
+          accessToken,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      };
+      this.mailerService.addTransporter('gmail', config);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
-
+  
   generateRandomNumericCode(): string {
     const randomNum = Math.floor(Math.random() * 100000);
     const code = randomNum.toString();
@@ -59,7 +67,7 @@ export class MailingService {
       this.mailerService
         .sendMail({
           transporterName: 'gmail',
-          to: 'thalis.alcapone@gmail.com', // list of receivers
+          to: 'engdemeferreira@gmail.com', // list of receivers
           from: 'demithehomie@gmail.com', // sender address
           subject: 'Verficiaction Code', // Subject line
           template: 'action',
@@ -67,7 +75,7 @@ export class MailingService {
             // Data to be sent to template engine..
             code: verificationCode,
           },
-        })
+        }) //
         .then((success) => {
           console.log(success);
         })

@@ -23,9 +23,17 @@ CREATE TABLE "users" (
     "role" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "emailVerificationCode" VARCHAR(5) NOT NULL DEFAULT '12345',
+    "SMSVerificationCode" VARCHAR(5) NOT NULL DEFAULT '12345',
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_emailVerificationCode_key" ON "users"("emailVerificationCode");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_SMSVerificationCode_key" ON "users"("SMSVerificationCode");

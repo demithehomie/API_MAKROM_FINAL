@@ -11,6 +11,8 @@ import { AuthRegisterDTO } from "./dto/auth-register.dto";
 import { AuthResetDTO } from "./dto/auth-reset.dto";
 import {join} from 'path';
 import { FileService } from "src/file/file.service";
+import { AuthConfirmEmailDTO } from "./dto/auth-confirm-email.dto";
+import { AuthConfirmSMSDto } from "./dto/auth-confirm-sms.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +31,16 @@ export class AuthController {
     @Post('register')
     async register(@Body() body: AuthRegisterDTO) {
         return this.authService.register(body);
+    }
+
+    @Post('confirm-email/:token')
+    async confirmUserByEmail(@Body() {emailVerificationCode}: AuthConfirmEmailDTO) {
+        return this.authService.confirmUserByEmail(emailVerificationCode);
+    }
+
+    @Post('confirm-sms')
+    async confirmSMS(@Body() {SMSVerificationCode}: AuthConfirmSMSDto) {
+        return this.authService.confirmSMS(SMSVerificationCode);
     }
 
     @Post('forget')
@@ -59,7 +71,7 @@ export class AuthController {
             ]
         })) photo: Express.Multer.File
     ) {
-
+//
         const path = join(__dirname, '..', '..', 'storage', 'photos', `photo-${user.id}.png`);
         
         try {
