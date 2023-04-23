@@ -1,4 +1,4 @@
-import { IsJWT, IsNumberString, MaxLength } from "class-validator";
+import { IsEmail, IsJWT, IsNumberString, MaxLength } from "class-validator";
 
 export class AuthConfirmEmailDTO {
 
@@ -6,6 +6,7 @@ export class AuthConfirmEmailDTO {
     @IsNumberString()
     emailVerificationCode: string;
 
- 
+    @IsEmail()
+    email: string;
 
 }

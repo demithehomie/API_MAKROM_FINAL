@@ -54,6 +54,8 @@ export class CreateUserDTO {
     @IsEnum(Role)
     role: number;
 
+    @IsOptional()
+    emailVerificationCode: string;
 
     @IsString()   
     observations :string;

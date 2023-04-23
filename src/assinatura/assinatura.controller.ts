@@ -4,7 +4,8 @@ import { HttpService } from '@nestjs/axios';
 
 require('dotenv').config();
 
-const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
+//const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
+const ASAAS_API_KEY = "$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwNTA4OTE6OiRhYWNoXzg2MDQ2MzlmLTI4ZDQtNGZiMi04YjI5LWM1NWMyNzBjOGMyNw==";
 
 @Controller('subscriptions')
 export class AssinaturaController {

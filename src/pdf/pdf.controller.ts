@@ -6,7 +6,7 @@ import { PDFService } from './pdf.service';
 export class PdfController {
   constructor(private readonly pdfService: PDFService) {}
 
-  @Get()
+  @Get('generate')
   async generatePdf(@Res() res: Response): Promise<void> {
     // Obtém o documento PDF gerado do serviço PDFService
     const doc = this.pdfService.generatePDF();

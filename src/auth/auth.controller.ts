@@ -1,5 +1,5 @@
-import { Controller, Post, Body, UseGuards, UseInterceptors, BadRequestException, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator } from "@nestjs/common";
-import { UploadedFile, UploadedFiles } from "@nestjs/common/decorators";
+import { Controller, Post, Body, UseGuards, UseInterceptors, BadRequestException, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, UnauthorizedException } from "@nestjs/common";
+import { Get, Param, UploadedFile, UploadedFiles } from "@nestjs/common/decorators";
 import { FileInterceptor, FilesInterceptor, FileFieldsInterceptor } from "@nestjs/platform-express";
 import { User } from "src/decorators/user.decorator";
 import { AuthGuard } from "src/guards/auth.guard";
@@ -13,9 +13,12 @@ import {join} from 'path';
 import { FileService } from "src/file/file.service";
 import { AuthConfirmEmailDTO } from "./dto/auth-confirm-email.dto";
 import { AuthConfirmSMSDto } from "./dto/auth-confirm-sms.dto";
+import { AuthenticateDTO } from "./dto/authenticate.dto";
 
 @Controller('auth')
 export class AuthController {
+    jwtService: any;
+    prisma: any;
 
     constructor(
         private readonly userService: UserService,
@@ -32,12 +35,11 @@ export class AuthController {
     async register(@Body() body: AuthRegisterDTO) {
         return this.authService.register(body);
     }
-
-    @Post('confirm-email/:token')
+    @Post('confirm-email')
     async confirmUserByEmail(@Body() {emailVerificationCode}: AuthConfirmEmailDTO) {
         return this.authService.confirmUserByEmail(emailVerificationCode);
     }
-
+     
     @Post('confirm-sms')
     async confirmSMS(@Body() {SMSVerificationCode}: AuthConfirmSMSDto) {
         return this.authService.confirmSMS(SMSVerificationCode);

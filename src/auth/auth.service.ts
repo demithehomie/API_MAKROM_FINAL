@@ -131,62 +131,63 @@ export class AuthService {
 
     async confirmSMS(SMS: string){
 
-        const SMSVerificationCode = this.generateRandomNumericCode();
+      const SMSVerificationCode = this.generateRandomNumericCode();
 
-        const verificationData = {
-            code: SMSVerificationCode,
-            timestamp: new Date().getTime(),
-        };
-
-
-    }
-    
-    async confirmUserByEmail(code: string) {
-        const emailVerificationCode = this.generateRandomNumericCode();
-
-        const user = await this.prisma.user.findFirst();
-
-        if (!user) {
-            throw new UnauthorizedException('O e-mail está incorreto.');
-        }
-
-        if (!user) {
-            throw new UnauthorizedException('E-mail e/ou senha incorretos.');
-        }
-
-        const token = this.jwtService.sign(
-            { code: emailVerificationCode },
-            { expiresIn: '30 minutes', subject: String(user.id) }
-          );
+      const verificationData = {
+          code: SMSVerificationCode,
+          timestamp: new Date().getTime(),
+      };
 
 
-        await this.setTransport();
-    
-        await this.mailer.sendMail({
-            subject: 'Confirmação de Senha',
-            transporterName: 'gmail',
-            to: user.email, // list of receivers
-            from: 'demithehomie@gmail.com', // sender address
+  }
+  
+  async confirmUserByEmail(code: string) {
+      const emailVerificationCode = this.generateRandomNumericCode();
+
+      const user = await this.prisma.user.findFirst();
+
+      if (!user) {
+          throw new UnauthorizedException('O e-mail está incorreto.');
+      }
+
+      if (!user) {
+          throw new UnauthorizedException('E-mail e/ou senha incorretos.');
+      }
+
+      const token = this.jwtService.sign(
+          { code: emailVerificationCode },
+          { expiresIn: '30 minutes', subject: String(user.id) }
+        );
+
+
+      await this.setTransport();
+  
+      await this.mailer.sendMail({
+          subject: 'Confirmação de Senha',
+          transporterName: 'gmail',
+          to: user.email, // list of receivers
+          from: 'demithehomie@gmail.com', // sender address
+      
+          template: 'confirm',
+          context: {
+              user: user.name,
+              code: emailVerificationCode,
+              link: "http://localhost:8100/successpage"
+          }
+        })
         
-            template: 'confirm',
-            context: {
-                user: user.name,
-                code: emailVerificationCode,
-                link: "http://localhost:8100/successpage"
-            }
-          })
-          
-          .then((success) => {
-            console.log(success);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        .then((success) => {
+          console.log(success);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-        return true;
+      return true;
 
-    }
+  }   
 
+    
     async forget(email: string) {
 
         const user = await this.prisma.user.findFirst({

@@ -8,6 +8,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model PRODIST {
+  ContaDeLuz             String
+  NumeroDoCliente        String @unique
+  ClasseUC               String
+  CotaMensal             String
+  PotenciaInstalada      String
+  TensaoDeAtendimento    Int
+  TipoDeConexao          String
+  TipoDeRamai            String
+  PotenciaInstaladaGeral String
+  TipoDaFonteDeGeracao   String
+  MenorConsumoUltimos12  String
+  MaiorConsumoUltimos12  String
+}
 
 
 model User {
@@ -35,8 +49,8 @@ model User {
   createdAt           DateTime  @default(now()) @db.Timestamp(0)
   updatedAt           DateTime  @default(now()) @db.Timestamp(0)
 
-  emailVerificationCode String @default("12345") @db.VarChar(5) @unique
-  SMSVerificationCode String @default("12345") @db.VarChar(5) @unique
+  emailVerificationCode String @default("12345") @db.VarChar(5) 
+  SMSVerificationCode String @default("12345") @db.VarChar(5) 
 
   @@map("users")
 }
