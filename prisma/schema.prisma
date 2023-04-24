@@ -8,9 +8,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model PRODIST {
+model Prodist {
   ContaDeLuz             String
-  NumeroDoCliente        String @unique
+  NumeroDoCliente        Int @unique
   ClasseUC               String
   CotaMensal             String
   PotenciaInstalada      String
