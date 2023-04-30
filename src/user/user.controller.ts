@@ -8,9 +8,11 @@ import { CreateUserDTO } from "./dto/create-user.dto";
 import { UpdatePatchUserDTO } from "./dto/update-patch-user.dto";
 import { UpdatePutUserDTO } from "./dto/update-put-user.dto";
 import { UserService } from "./user.service";
+import { AuthGuard } from "src/guards/auth.guard";
+import { RoleGuard } from "src/guards/role.guard";
 
 @Roles(Role.Admin)
-// @UseGuards(AuthGuard, RoleGuard)
+@UseGuards(AuthGuard, RoleGuard)
 @UseInterceptors(LogInterceptor)
 @Controller('users')
 export class UserController {

@@ -23,6 +23,9 @@ model Prodist {
   MaiorConsumoUltimos12  String
 }
 
+model Cliente {
+  id                  String  @unique
+}
 
 model User {
   id                  Int       @id @default(autoincrement())

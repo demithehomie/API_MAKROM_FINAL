@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { Controller, Post, Body, Get, Delete, Param, UseGuards } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { ClienteDTO } from './client.dto';
+import { ClienteService } from './client.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 //import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 require('dotenv').config();
@@ -13,7 +16,7 @@ export class ClienteController {
 
   private readonly asaasApiUrl = 'https://sandbox.asaas.com/api/v3';
  
-  constructor( private httpService: HttpService) {}
+  constructor( private httpService: HttpService, private clienteService: ClienteService, private prisma: PrismaService) {}
 
    
     // @UseGuards(JwtAuthGuard)
@@ -22,9 +25,16 @@ export class ClienteController {
       const url = `${this.asaasApiUrl}/customers`;
       const headers = {  access_token: ASAAS_API_KEY, 'Content-Type': 'application/json' };
       const response = await axios.post(url, datacliente, { headers });
-      return response.data;
+      const new_id = response.data.id;
+      const saved_id = await this.clienteService.create(new_id);
+      return { ...response.data, saved_id, new_id };
+      
     }
   
+
+ 
+
+
     @Get()
     async getCustomers() {
       const url = `${this.asaasApiUrl}/customers`;
