@@ -6,6 +6,10 @@ export class ClienteDTO {
     @IsString()
     id: string;
 
+    @IsString()
+    name: string;
 
+    @IsString()
+    cpfCnpj: string;
 }
 //

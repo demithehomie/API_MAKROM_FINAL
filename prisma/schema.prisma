@@ -25,6 +25,8 @@ model Prodist {
 
 model Cliente {
   id                  String  @unique
+  name                String   @default("name") @db.VarChar(63)
+  cpfCnpj             String  @default("cpfCnpj")  @db.VarChar(127)
 }
 
 model User {

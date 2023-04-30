@@ -7,12 +7,15 @@ export class ClienteService {
 
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(id: any) {
-       // const { id } = clienteDTO;
+    async create(id: any, name: any, cpfCnpj: any ) {
+        
        
        return this.prisma.cliente.create({
         data: {
-         id
+         id, // data.id,
+         name, //data.name,
+         cpfCnpj // data.cpfCnpj
+
           },
        });
 

@@ -26,11 +26,15 @@ export class ClienteController {
       const headers = {  access_token: ASAAS_API_KEY, 'Content-Type': 'application/json' };
       const response = await axios.post(url, datacliente, { headers });
       const new_id = response.data.id;
-      const saved_id = await this.clienteService.create(new_id);
-      return { ...response.data, saved_id, new_id };
-      
+      const new_name = response.data.name;
+      const new_cpfCnpj = response.data.cpfCnpj;
+
+     // const new_data = { new_id, new_name, new_cpfCnpj }
+      const saved_data = await this.clienteService.create(new_id, new_name, new_cpfCnpj);
+      return { ...response.data, saved_data };
+      //
     }
-  
+  //
 
  
 
