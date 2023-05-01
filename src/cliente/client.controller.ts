@@ -4,6 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { ClienteDTO } from './client.dto';
 import { ClienteService } from './client.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ParamId } from 'src/decorators/param-id.decorator';
 //import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 require('dotenv').config();
@@ -35,6 +36,19 @@ export class ClienteController {
       //
     }
   //
+
+  @Get('/customers_from_database/:cpfCnpj')
+  async getCustomersFromDatabase(@Param('cpfCnpj') cpfCnpj: string) {
+    console.log({cpfCnpj});
+    return this.clienteService.show(cpfCnpj);
+  }
+
+ 
+  @Get('/customers_from_database')
+  async getAllCustomersFromDatabase() {
+    //console.log({cpfCnpj});
+    return this.clienteService.list();
+  }
 
  
 
