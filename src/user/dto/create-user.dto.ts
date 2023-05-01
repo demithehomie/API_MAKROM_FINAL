@@ -60,4 +60,3 @@ export class CreateUserDTO {
     @IsString()   
     observations :string;
 }
-//

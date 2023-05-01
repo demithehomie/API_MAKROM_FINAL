@@ -25,22 +25,31 @@ export class ClienteController {
     async createCustomers(@Body() datacliente: any): Promise<any> {
       const url = `${this.asaasApiUrl}/customers`;
       const headers = {  access_token: ASAAS_API_KEY, 'Content-Type': 'application/json' };
+      // ABAIXO SALVA NO BANCO DE DADOS DO ASAAS
       const response = await axios.post(url, datacliente, { headers });
+       // ACIMA SALVA NO BANCO DE DADOS DO ASAAS  
       const new_id = response.data.id;
       const new_name = response.data.name;
       const new_cpfCnpj = response.data.cpfCnpj;
 
-     // const new_data = { new_id, new_name, new_cpfCnpj }
+      // ABAIXO SALVA NO BANCO DE DADOS
       const saved_data = await this.clienteService.create(new_id, new_name, new_cpfCnpj);
+      // ACIMA SALVA NO BANCO DE DADOS
       return { ...response.data, saved_data };
-      //
+        
     }
-  //
+  
 
   @Get('/customers_from_database/:cpfCnpj')
-  async getCustomersFromDatabase(@Param('cpfCnpj') cpfCnpj: string) {
+  async getCustomersFromDatabaseByCPF(@Param('cpfCnpj') cpfCnpj: string) {
     console.log({cpfCnpj});
-    return this.clienteService.show(cpfCnpj);
+    return this.clienteService.showByCPF(cpfCnpj);
+  }
+
+  @Get('/customers_from_database_by_id/:id')
+  async getCustomersFromDatabaseByCustomerID(@Param('id') id: string) {
+    console.log({id});
+    return this.clienteService.showById(id);
   }
 
  
