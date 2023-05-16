@@ -42,7 +42,7 @@ export class AuthController {
     //
     @Post('confirm-email')
     async confirmUserByEmail(@Body() {emailVerificationCode}: AuthConfirmEmailDTO) {
-        return this.authService.confirmUserByEmail(emailVerificationCode);
+        return this.authService.startEmailConfirmation(emailVerificationCode);
     }
      
     @Post('confirm-sms')
@@ -56,8 +56,8 @@ export class AuthController {
     }
 
     @Post('reset')
-    async reset(@Body() {password, emailVerificationCode}: AuthResetDTO) {
-        return this.authService.reset(password, emailVerificationCode);
+    async reset(@Body() {password, forgetVerificationCode}: AuthResetDTO) {
+        return this.authService.reset(password, forgetVerificationCode);
     }
 
     @UseGuards(AuthGuard)  ///////////

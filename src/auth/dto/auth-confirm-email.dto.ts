@@ -6,7 +6,7 @@ export class AuthConfirmEmailDTO {
     @IsNumberString()
     emailVerificationCode: string;
 
-    @IsEmail()
-    email: string;
+    // @IsEmail()
+    // email: string;
 
 }

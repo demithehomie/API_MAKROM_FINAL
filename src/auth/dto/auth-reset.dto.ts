@@ -10,5 +10,5 @@ export class AuthResetDTO {
     //token: string;
 
     @IsString()
-    emailVerificationCode: string;
+    forgetVerificationCode: string;
 }

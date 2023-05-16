@@ -132,18 +132,20 @@ export class AuthService {
 
     async confirmSMS(SMS: string){
 
-      const SMSVerificationCode = this.generateRandomNumericCode();
+      // const SMSVerificationCode = this.generateRandomNumericCode();
 
-      const verificationData = {
-          code: SMSVerificationCode,
-          timestamp: new Date().getTime(),
-      };
+      // const verificationData = {
+      //     code: SMSVerificationCode,
+      //     timestamp: new Date().getTime(),
+      // };
 
 
   }
+
+ 
   
   async confirmUserByEmail(code: string) {
-      const emailVerificationCode = this.generateRandomNumericCode();
+      const emailVerificationCode = "" //this.generateRandomNumericCode();
 
       const user = await this.prisma.user.findFirst();
 
@@ -203,7 +205,7 @@ export class AuthService {
 
 
           // Gerar um código numérico aleatório de seis dígitos
-    const emailVerificationCode = this.generateRandomNumericCode();
+    const forgetVerificationCode = this.generateRandomNumericCodeReset();
 
     // Armazenar o código no banco de dados para o usuário correspondente
     await this.prisma.user.update({
@@ -211,20 +213,9 @@ export class AuthService {
         id: user.id,
       },
       data: {
-        emailVerificationCode,
+        forgetVerificationCode,
       },
     });
-
-        // const name = user.name;
-
-        // const token = this.jwtService.sign({
-        //     id: user.id
-        // }, {
-        //     expiresIn: "15 minutes",
-        //     subject: String(user.id),
-        //     issuer: 'forget',
-        //     audience: 'users',
-        // });
 
         await this.setTransport();
     
@@ -236,8 +227,7 @@ export class AuthService {
         
             template: 'forget',
             context: {
-                //user: name,
-               code: emailVerificationCode //
+               code: forgetVerificationCode //
             }
           })
           .then((success) => {
@@ -247,16 +237,16 @@ export class AuthService {
             console.log(err);
           });
 
-        // return {token, name};
-        return { emailVerificationCode, name: user.name };
+
+        return { forgetVerificationCode, name: user.name };
 
     }
 
-    async reset(password: string, emailVerificationCode: string) {
+    async reset(password: string, forgetVerificationCode: string) {
 
       const user = await this.prisma.user.findFirst({
         where: {
-          emailVerificationCode,
+          forgetVerificationCode,
         },
       });
 
@@ -264,34 +254,9 @@ export class AuthService {
         throw new BadRequestException('Código de verificação inválido.');
       }
 
-        // try {
-        //     const data:any = this.jwtService.verify(token, {
-        //         issuer: 'forget',
-        //         audience: 'users',
-        //     });
-
-        //     if (isNaN(Number(data.id))) {
-        //         throw new BadRequestException("Token é inválido.");
-        //     }
-
             const salt = await bcrypt.genSalt();
             const hashedPassword = await bcrypt.hash(password, salt);
-            // password = await bcrypt.hash(password, salt);
-
-            // const user = await this.prisma.user.update({
-            //     where: {
-            //         id: Number(data.id),
-            //     },
-            //     data: {
-            //         password,
-            //     },
-            // });
-
-            // return this.createToken(user);
-
-        // } catch (e) {
-        //     throw new BadRequestException(e);
-        // }
+     
 
         await this.prisma.user.update({
           where: {
@@ -299,35 +264,71 @@ export class AuthService {
           },
           data: {
             password: hashedPassword,
-            emailVerificationCode:  undefined, // Limpar o código de verificação após a redefinição da senha
+            forgetVerificationCode:  undefined, // Limpar o código de verificação após a redefinição da senha
           },
         });
     
         return this.createToken(user);
     }
 
-   generateRandomNumericCode(): string {
-       const randomNum = Math.floor(Math.random() * 100000);
-       const code = randomNum.toString();
-       return code.padStart(5  , '0');
-     }
+
+    async startEmailConfirmation (emailVerificationCode: string){
+
+    
+      const user = await this.prisma.user.findFirst({
+        where: {
+          emailVerificationCode,
+        },
+      });
+  
+      if (!user) {
+        throw new BadRequestException('Código de verificação inválido.');
+      }
+  
+        
+  
+        await this.prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            
+            emailVerificationCode: undefined   // Limpar o código de verificação após a redefinição da senha
+          },
+        });
+    
+        return this.createToken(user), { emailVerificationCode } ;
+  
+      
+    }
 
     async register(data: AuthRegisterDTO) {
 
         const user = await this.userService.create(data);
+
+        const emailVerificationCode =  this.generateRandomNumericCodeSignUp() //this.createToken(user);
+
+        await this.prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            emailVerificationCode,
+          },
+        });
        
         await this.setTransport();
     
-        const emailVerificationCode = this.createToken(user);
+        
     
         this.mailerService.sendMail({
             transporterName: 'gmail',
             to: user.email, // list of receivers
             from: 'demithehomie@gmail.com', // sender address
             subject: 'Bem-Vindo a Coopeere', // Subject line
-            template: 'confirm-link',
+            template: 'confirm',
             context: {
-                link: `http://localhost:8100/verify-token/${emailVerificationCode}`,
+                code:  user.emailVerificationCode,
             }
           })
           .then((success) => {
@@ -338,8 +339,10 @@ export class AuthService {
           });
 
 
-        return this.createToken(user);
-
+        return {
+          token: this.createToken(user),
+          emailVerificationCode: emailVerificationCode,
+        };
     }
 
     googleLogin(req) {
@@ -351,6 +354,18 @@ export class AuthService {
         message: 'User information from google',
         user: req.user,
       };
+    }
+
+    generateRandomNumericCodeSignUp(): string {
+      const randomNum = Math.floor(Math.random() * 100000);
+      const code = randomNum.toString();
+      return code.padStart(5  , '0');
+    }
+
+    generateRandomNumericCodeReset(): string {
+      const randomNum = Math.floor(Math.random() * 100000);
+      const code = randomNum.toString();
+      return code.padStart(5  , '0');
     }
 
     }

@@ -55,7 +55,8 @@ model User {
   updatedAt           DateTime  @default(now()) @db.Timestamp(0)
 
   emailVerificationCode String @default("12345") @db.VarChar(5) 
-  SMSVerificationCode String @default("12345") @db.VarChar(5) 
+  SMSVerificationCode String @default("12345") @db.VarChar(5)
+  forgetVerificationCode String @default("12345") @db.VarChar(5) 
 
   @@map("users")
 }
