@@ -200,16 +200,31 @@ export class AuthService {
         if (!user) {
             throw new UnauthorizedException('E-mail está incorreto.');
         }
-        const name = user.name;
 
-        const token = this.jwtService.sign({
-            id: user.id
-        }, {
-            expiresIn: "15 minutes",
-            subject: String(user.id),
-            issuer: 'forget',
-            audience: 'users',
-        });
+
+          // Gerar um código numérico aleatório de seis dígitos
+    const emailVerificationCode = this.generateRandomNumericCode();
+
+    // Armazenar o código no banco de dados para o usuário correspondente
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        emailVerificationCode,
+      },
+    });
+
+        // const name = user.name;
+
+        // const token = this.jwtService.sign({
+        //     id: user.id
+        // }, {
+        //     expiresIn: "15 minutes",
+        //     subject: String(user.id),
+        //     issuer: 'forget',
+        //     audience: 'users',
+        // });
 
         await this.setTransport();
     
@@ -221,8 +236,8 @@ export class AuthService {
         
             template: 'forget',
             context: {
-                user: name,
-               code: token //
+                //user: name,
+               code: emailVerificationCode //
             }
           })
           .then((success) => {
@@ -232,40 +247,63 @@ export class AuthService {
             console.log(err);
           });
 
-        return {token, name};
+        // return {token, name};
+        return { emailVerificationCode, name: user.name };
 
     }
 
-    async reset(password: string, token: string) {
+    async reset(password: string, emailVerificationCode: string) {
 
-        try {
-            const data:any = this.jwtService.verify(token, {
-                issuer: 'forget',
-                audience: 'users',
-            });
+      const user = await this.prisma.user.findFirst({
+        where: {
+          emailVerificationCode,
+        },
+      });
 
-            if (isNaN(Number(data.id))) {
-                throw new BadRequestException("Token é inválido.");
-            }
+      if (!user) {
+        throw new BadRequestException('Código de verificação inválido.');
+      }
+
+        // try {
+        //     const data:any = this.jwtService.verify(token, {
+        //         issuer: 'forget',
+        //         audience: 'users',
+        //     });
+
+        //     if (isNaN(Number(data.id))) {
+        //         throw new BadRequestException("Token é inválido.");
+        //     }
 
             const salt = await bcrypt.genSalt();
-            password = await bcrypt.hash(password, salt);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            // password = await bcrypt.hash(password, salt);
 
-            const user = await this.prisma.user.update({
-                where: {
-                    id: Number(data.id),
-                },
-                data: {
-                    password,
-                },
-            });
+            // const user = await this.prisma.user.update({
+            //     where: {
+            //         id: Number(data.id),
+            //     },
+            //     data: {
+            //         password,
+            //     },
+            // });
 
-            return this.createToken(user);
+            // return this.createToken(user);
 
-        } catch (e) {
-            throw new BadRequestException(e);
-        }
+        // } catch (e) {
+        //     throw new BadRequestException(e);
+        // }
 
+        await this.prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            password: hashedPassword,
+            emailVerificationCode:  undefined, // Limpar o código de verificação após a redefinição da senha
+          },
+        });
+    
+        return this.createToken(user);
     }
 
    generateRandomNumericCode(): string {

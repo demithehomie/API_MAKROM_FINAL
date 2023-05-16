@@ -1,4 +1,4 @@
-import { IsJWT, IsString, MinLength } from "class-validator";
+import { IsJWT, IsString, MinLength, isString } from "class-validator";
 
 export class AuthResetDTO {
 
@@ -6,7 +6,9 @@ export class AuthResetDTO {
     @MinLength(6)
     password: string;
 
-    @IsJWT()
-    token: string;
+    //@IsJWT()
+    //token: string;
 
+    @IsString()
+    emailVerificationCode: string;
 }
