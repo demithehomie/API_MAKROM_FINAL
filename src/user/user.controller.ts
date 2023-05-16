@@ -12,7 +12,7 @@ import { AuthGuard } from "src/guards/auth.guard";
 import { RoleGuard } from "src/guards/role.guard";
 
 @Roles(Role.Admin)
-@UseGuards(AuthGuard, RoleGuard)
+//@UseGuards(AuthGuard, RoleGuard)
 @UseInterceptors(LogInterceptor)
 @Controller('users')
 export class UserController {
@@ -22,7 +22,7 @@ export class UserController {
     @Post()
     async create(@Body() data: CreateUserDTO) {
         return this.userService.create(data);
-    }
+    } 
 
     @Get()
     async list() {

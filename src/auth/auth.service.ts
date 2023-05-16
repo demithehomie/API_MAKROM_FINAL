@@ -20,7 +20,6 @@ export class AuthService {
     
 
     constructor(
-
         private readonly configService: ConfigService,
         private readonly mailerService: MailerService,
         private readonly jwtService: JwtService,
@@ -79,10 +78,12 @@ export class AuthService {
                 name: user.name,
                 email: user.email
             }, {
-                expiresIn: "7 days",
+                expiresIn: "10 minutes",
                 subject: String(user.id),
                 issuer: this.issuer,
                 audience: this.audience,
+
+                // remember notBefore - para iniciar tokens em uma hora específica
             })
         }
     }
@@ -204,7 +205,7 @@ export class AuthService {
         const token = this.jwtService.sign({
             id: user.id
         }, {
-            expiresIn: "30 minutes",
+            expiresIn: "15 minutes",
             subject: String(user.id),
             issuer: 'forget',
             audience: 'users',
@@ -231,7 +232,7 @@ export class AuthService {
             console.log(err);
           });
 
-        return true;
+        return {token, name};
 
     }
 
@@ -267,30 +268,28 @@ export class AuthService {
 
     }
 
-    generateRandomNumericCode(): string {
-        const randomNum = Math.floor(Math.random() * 100000);
-        const code = randomNum.toString();
-        return code.padStart(5  , '0');
-      }
+   generateRandomNumericCode(): string {
+       const randomNum = Math.floor(Math.random() * 100000);
+       const code = randomNum.toString();
+       return code.padStart(5  , '0');
+     }
 
     async register(data: AuthRegisterDTO) {
 
         const user = await this.userService.create(data);
        
         await this.setTransport();
-
-
     
-        const emailVerificationCode = this.generateRandomNumericCode();
+        const emailVerificationCode = this.createToken(user);
     
         this.mailerService.sendMail({
             transporterName: 'gmail',
             to: user.email, // list of receivers
             from: 'demithehomie@gmail.com', // sender address
             subject: 'Bem-Vindo a Coopeere', // Subject line
-            template: 'action',
+            template: 'confirm-link',
             context: {
-                code: emailVerificationCode,
+                link: `http://localhost:8100/verify-token/${emailVerificationCode}`,
             }
           })
           .then((success) => {
@@ -303,6 +302,17 @@ export class AuthService {
 
         return this.createToken(user);
 
+    }
+
+    googleLogin(req) {
+      if (!req.user) {
+        return 'No user from google';
+      }
+  
+      return {
+        message: 'User information from google',
+        user: req.user,
+      };
     }
 
     }

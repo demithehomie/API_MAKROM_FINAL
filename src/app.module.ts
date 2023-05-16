@@ -23,6 +23,7 @@ import { PDFModule } from './pdf/pdf.module';
 
 @Module({
   imports: [
+ 
     PDFModule,
     AssinaturaModule,
     ClienteModule,

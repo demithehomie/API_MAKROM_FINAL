@@ -1,4 +1,5 @@
-import { Controller, Post, Body, UseGuards, UseInterceptors, BadRequestException, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, UnauthorizedException } from "@nestjs/common";
+import { GoogleOAuthGuard } from "./google/google-oauth.guard"
+import { Controller, Request, Post, Body, UseGuards, UseInterceptors, BadRequestException, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, UnauthorizedException } from "@nestjs/common";
 import { Get, Param, UploadedFile, UploadedFiles } from "@nestjs/common/decorators";
 import { FileInterceptor, FilesInterceptor, FileFieldsInterceptor } from "@nestjs/platform-express";
 import { User } from "src/decorators/user.decorator";
@@ -15,6 +16,8 @@ import { AuthConfirmEmailDTO } from "./dto/auth-confirm-email.dto";
 import { AuthConfirmSMSDto } from "./dto/auth-confirm-sms.dto";
 import { AuthenticateDTO } from "./dto/authenticate.dto";
 
+
+
 @Controller('auth')
 export class AuthController {
     jwtService: any;
@@ -30,11 +33,13 @@ export class AuthController {
     async login(@Body() {email, password}: AuthLoginDTO) {
         return this.authService.login(email, password);
     }
-//
+
     @Post('register')
     async register(@Body() body: AuthRegisterDTO) {
         return this.authService.register(body);
     }
+
+    //
     @Post('confirm-email')
     async confirmUserByEmail(@Body() {emailVerificationCode}: AuthConfirmEmailDTO) {
         return this.authService.confirmUserByEmail(emailVerificationCode);
@@ -44,7 +49,7 @@ export class AuthController {
     async confirmSMS(@Body() {SMSVerificationCode}: AuthConfirmSMSDto) {
         return this.authService.confirmSMS(SMSVerificationCode);
     }
-
+    //
     @Post('forget')
     async forget(@Body() {email}: AuthForgetDTO) {
         return this.authService.forget(email);
@@ -55,7 +60,7 @@ export class AuthController {
         return this.authService.reset(password, token);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)  ///////////
     @Post('me')
     async me(@User() user) {
         return {user};
@@ -103,6 +108,16 @@ export class AuthController {
     @Post('files-fields')
     async uploadFilesFields(@User() user, @UploadedFiles() files: {photo: Express.Multer.File, documents: Express.Multer.File[]}) {
         return files;
+    }
+
+    @Get('google')
+    @UseGuards(GoogleOAuthGuard)
+    async googleAuth(@Request() req) {}
+  
+    @Get('google-redirect')
+    @UseGuards(GoogleOAuthGuard)
+    googleAuthRedirect(@Request() req) {
+      return this.authService.googleLogin(req);
     }
 
 }

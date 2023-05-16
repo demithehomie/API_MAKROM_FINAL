@@ -5,6 +5,7 @@ import { PrismaModule } from "src/prisma/prisma.module";
 import { UserModule } from "src/user/user.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { GoogleStrategy } from "./google/google.strategy";
 
 @Module({
     imports: [
@@ -16,7 +17,7 @@ import { AuthService } from "./auth.service";
         FileModule
     ],
     controllers: [AuthController],
-    providers: [AuthService],
+    providers: [AuthService, GoogleStrategy],
     exports: [AuthService]
 })
 export class AuthModule {

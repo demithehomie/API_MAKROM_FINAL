@@ -20,7 +20,7 @@ export class ClienteController {
   constructor( private httpService: HttpService, private clienteService: ClienteService, private prisma: PrismaService) {}
 
    
-    // @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)                               
     @Post()
     async createCustomers(@Body() datacliente: any): Promise<any> {
       const url = `${this.asaasApiUrl}/customers`;
@@ -36,7 +36,7 @@ export class ClienteController {
       const saved_data = await this.clienteService.create(new_id, new_name, new_cpfCnpj);
       // ACIMA SALVA NO BANCO DE DADOS
       return { ...response.data, saved_data };
-        
+        //
     }
   
 
@@ -52,7 +52,7 @@ export class ClienteController {
     return this.clienteService.showById(id);
   }
 
- 
+ //
   @Get('/customers_from_database')
   async getAllCustomersFromDatabase() {
     //console.log({cpfCnpj});
