@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from '@nestjs/common'
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common'
 import { UnauthorizedException } from '@nestjs/common/exceptions/unauthorized.exception';
 import {JwtService} from '@nestjs/jwt'
 import { User } from '@prisma/client';
@@ -10,6 +10,7 @@ import { MailerService } from '@nestjs-modules/mailer/dist';
 import { ConfigService } from '@nestjs/config';
 import { Options } from 'nodemailer/lib/smtp-transport';
 import { google } from 'googleapis';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -110,6 +111,18 @@ export class AuthService {
         }
     }
 
+    // No seu UserService
+async findUserByEmail(email: string): Promise<User | null> {
+  try {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    return user;
+  } catch (error) {
+    // Lidar com o erro, como registrar em um arquivo de log ou retornar uma mensagem de erro adequada
+    throw new Error('Error finding user by email');
+  }
+}
+
+
     async login(email:string, password:string) {
 
         const user = await this.prisma.user.findFirst({
@@ -130,65 +143,148 @@ export class AuthService {
 
     }
 
-    async confirmSMS(SMS: string){
 
-      // const SMSVerificationCode = this.generateRandomNumericCode();
+    async startSMSConfirmation(id: number) {
 
-      // const verificationData = {
-      //     code: SMSVerificationCode,
-      //     timestamp: new Date().getTime(),
-      // };
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id: id
+        },
+      });
+  
+      if (!user) {
+        throw new UnauthorizedException('Celular está incorreto.');
+      }
+  
+      const SMSVerificationCode = this.generateRandomNumericCodeforSMS();
+  
+      await this.prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          SMSVerificationCode,
+        },
+      });
+  
+      await this.sendSMS(user.mobilePhone, SMSVerificationCode); // Envie o SMS
+  
+      return { SMSVerificationCode, name: user.name, mobilePhone: user.mobilePhone };
+    }
+  
+    private async sendSMS(mobilePhone: string, verificationCode: string) {
 
+      const user = await this.prisma.user.findFirst({
+        where: {
+          mobilePhone,
+        },
+      });
+//
+      const apiKey =  process.env.WEB_SMS_API_KEY; // Substitua com a sua chave de API do SMSMobile
+  
+      const smsMessage = `COOPEERE: Seu codigo de verificacao e: ${verificationCode}`;
+  
+      try {
+        const response = await axios.post(
+          'https://app.websms.com.br/sms/shortcode/routes/sms.php',
+          {
+            hash: apiKey,
+            acao: "enviar",
+            numero: [user.mobilePhone],
+            mensagem: smsMessage,
+          },
+        
+        );
+  
+        // Verifique a resposta da chamada de API e faça o tratamento necessário
+        console.log(response.data);
+      } catch (error) {
+        // Trate qualquer erro de envio de SMS aqui
+        console.error(error);
+      }
+    }
+  
+  
 
-  }
+    async verifySMSCode(verificationCode: string) {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          SMSVerificationCode: verificationCode
+        },
+      });
+  
+      if (!user) {
+        throw new NotFoundException('Usuário não encontrado.');
+      }
 
+     
+  
+      if (user.SMSVerificationCode === verificationCode) {
+        // O código SMS foi confirmado com sucesso
+        // Realize as ações necessárias aqui, por exemplo, atualize o status de verificação do usuário
+  
+        await this.prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            SMSVerificationCode: undefined,
+          },
+        });
+  
+        return 'Código SMS confirmado com sucesso!';
+      } else {
+        throw new NotFoundException('Código de verificação SMS inválido.');
+      }
+    }
+  
  
   
-  async confirmUserByEmail(code: string) {
-      const emailVerificationCode = "" //this.generateRandomNumericCode();
+  // async confirmUserByEmail(code: string) {
+  //     const emailVerificationCode = "" //this.generateRandomNumericCode();
 
-      const user = await this.prisma.user.findFirst();
+  //     const user = await this.prisma.user.findFirst();
 
-      if (!user) {
-          throw new UnauthorizedException('O e-mail está incorreto.');
-      }
+  //     if (!user) {
+  //         throw new UnauthorizedException('O e-mail está incorreto.');
+  //     }
 
-      if (!user) {
-          throw new UnauthorizedException('E-mail e/ou senha incorretos.');
-      }
+  //     if (!user) {
+  //         throw new UnauthorizedException('E-mail e/ou senha incorretos.');
+  //     }
 
-      const token = this.jwtService.sign(
-          { code: emailVerificationCode },
-          { expiresIn: '30 minutes', subject: String(user.id) }
-        );
+  //     const token = this.jwtService.sign(
+  //         { code: emailVerificationCode },
+  //         { expiresIn: '30 minutes', subject: String(user.id) }
+  //       );
 
 
-      await this.setTransport();
+  //     await this.setTransport();
   
-      await this.mailer.sendMail({
-          subject: 'Confirmação de Senha',
-          transporterName: 'gmail',
-          to: user.email, // list of receivers
-          from: 'demithehomie@gmail.com', // sender address
+  //     await this.mailer.sendMail({
+  //         subject: 'Confirmação de Senha',
+  //         transporterName: 'gmail',
+  //         to: user.email, // list of receivers
+  //         from: 'demithehomie@gmail.com', // sender address
       
-          template: 'confirm',
-          context: {
-              user: user.name,
-              code: emailVerificationCode,
-              link: "http://localhost:8100/successpage"
-          }
-        })
+  //         template: 'confirm',
+  //         context: {
+  //             user: user.name,
+  //             code: emailVerificationCode,
+  //             link: "http://localhost:8100/successpage"
+  //         }
+  //       })
         
-        .then((success) => {
-          console.log(success);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+  //       .then((success) => {
+  //         console.log(success);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
 
-      return true;
+  //     return true;
 
-  }   
+  // }   
 
     
     async forget(email: string) {
@@ -215,7 +311,7 @@ export class AuthService {
       data: {
         forgetVerificationCode,
       },
-    });
+    }); //
 
         await this.setTransport();
     
@@ -301,12 +397,63 @@ export class AuthService {
   
       
     }
-
     async register(data: AuthRegisterDTO) {
 
-        const user = await this.userService.create(data);
+      const user = await this.userService.create(data);
 
-        const emailVerificationCode =  this.generateRandomNumericCodeSignUp() //this.createToken(user);
+      const emailVerificationCode =  this.generateRandomNumericCodeSignUp() //this.createToken(user);
+
+      await this.prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          emailVerificationCode,
+        },
+      });
+     
+      await this.setTransport();
+  
+      
+  
+      this.mailerService.sendMail({
+          transporterName: 'gmail',
+          to: user.email, // list of receivers
+          from: 'demithehomie@gmail.com', // sender address
+          subject: 'Bem-Vindo a Coopeere', // Subject line
+          template: 'confirm',
+          context: {
+              code:  user.emailVerificationCode,
+          }
+        })
+        .then((success) => {
+          console.log(success);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+
+      return {
+        token: this.createToken(user),
+        emailVerificationCode: emailVerificationCode,
+      };
+  }
+
+    async sendEmail(id: number) {
+      
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id: id
+        },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('Celular está incorreto.');
+      }
+  
+     
+        const emailVerificationCode =  this.generateRandomNumericCodeResend() //this.createToken(user);
 
         await this.prisma.user.update({
           where: {
@@ -316,34 +463,41 @@ export class AuthService {
             emailVerificationCode,
           },
         });
-       
-        await this.setTransport();
-    
-        
-    
-        this.mailerService.sendMail({
-            transporterName: 'gmail',
-            to: user.email, // list of receivers
-            from: 'demithehomie@gmail.com', // sender address
-            subject: 'Bem-Vindo a Coopeere', // Subject line
-            template: 'confirm',
-            context: {
-                code:  user.emailVerificationCode,
-            }
-          })
-          .then((success) => {
-            console.log(success);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
-
-        return {
-          token: this.createToken(user),
-          emailVerificationCode: emailVerificationCode,
-        };
+     
+        await this.sendSMS(user.email, emailVerificationCode); // Envie o SMS
+  
+        return { emailVerificationCode, name: user.name, email: user.email };
+      
     }
+
+    async sendSingleEmail(email: string, emailVerificationCode: string){
+
+      const user = await this.prisma.user.findFirst({
+        where: {
+          email,
+        },
+      });
+      
+      try {
+        await this.setTransport();
+      
+        await this.mailerService.sendMail({
+          transporterName: 'gmail',
+          to: user.email,
+          from: 'demithehomie@gmail.com',
+          subject: 'Bem-Vindo a Coopeere',
+          template: 'confirm',
+          context: {
+            code: user.emailVerificationCode,
+          },
+        });
+        console.log('Email sent successfully');
+      } catch (error) {
+        console.log('Error sending email:', error);
+      }
+      
+    }
+    
 
     googleLogin(req) {
       if (!req.user) {
@@ -357,6 +511,18 @@ export class AuthService {
     }
 
     generateRandomNumericCodeSignUp(): string {
+      const randomNum = Math.floor(Math.random() * 100000);
+      const code = randomNum.toString();
+      return code.padStart(5  , '0');
+    }
+
+    generateRandomNumericCodeforSMS(): string {
+      const randomNum = Math.floor(Math.random() * 100000);
+      const code = randomNum.toString();
+      return code.padStart(5  , '0');
+    }
+
+    generateRandomNumericCodeResend(): string {
       const randomNum = Math.floor(Math.random() * 100000);
       const code = randomNum.toString();
       return code.padStart(5  , '0');

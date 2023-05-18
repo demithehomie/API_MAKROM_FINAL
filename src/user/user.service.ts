@@ -40,6 +40,19 @@ export class UserService {
 
     }
 
+    email!: string
+
+    async showByEMail(email: string) {
+        await this.show;
+      
+        return this.prisma.user.findFirst({
+          where: {
+            email,
+          },
+        });
+      }
+      
+
     async update(id: number, {email, name, password, birthAt, role}: UpdatePutUserDTO) {
 
         await this.exists(id);

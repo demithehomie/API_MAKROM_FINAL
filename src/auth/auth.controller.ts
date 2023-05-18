@@ -15,6 +15,9 @@ import { FileService } from "src/file/file.service";
 import { AuthConfirmEmailDTO } from "./dto/auth-confirm-email.dto";
 import { AuthConfirmSMSDto } from "./dto/auth-confirm-sms.dto";
 import { AuthenticateDTO } from "./dto/authenticate.dto";
+import { AuthSendEmailDTO } from "./dto/auth-send-email.dto copy";
+import { MailerService } from "@nestjs-modules/mailer";
+
 
 
 
@@ -26,7 +29,8 @@ export class AuthController {
     constructor(
         private readonly userService: UserService,
         private readonly authService: AuthService,
-        private readonly fileService: FileService
+        private readonly fileService: FileService,
+        private readonly mailerService: MailerService
     ){}
 
     @Post('login')
@@ -39,22 +43,34 @@ export class AuthController {
         return this.authService.register(body);
     }
 
+  
+    
+    @Post('start-confirm-email')
+    async startConfirmByEmail(@Body() id: number) {
+        return this.authService.sendEmail(id);
+    }
+    
     //
     @Post('confirm-email')
     async confirmUserByEmail(@Body() {emailVerificationCode}: AuthConfirmEmailDTO) {
         return this.authService.startEmailConfirmation(emailVerificationCode);
     }
+
+    @Post('start-confirm-sms')
+    async startConfirmSMS(@Body() id: number) {
+        return this.authService.startSMSConfirmation(id);
+    }
      
     @Post('confirm-sms')
-    async confirmSMS(@Body() {SMSVerificationCode}: AuthConfirmSMSDto) {
-        return this.authService.confirmSMS(SMSVerificationCode);
+    async confirmSMS(@Body() {verificationCode}: AuthConfirmSMSDto) {
+        return this.authService.verifySMSCode(verificationCode);
     }
-    //
+    
     @Post('forget')
     async forget(@Body() {email}: AuthForgetDTO) {
         return this.authService.forget(email);
     }
-
+//
     @Post('reset')
     async reset(@Body() {password, forgetVerificationCode}: AuthResetDTO) {
         return this.authService.reset(password, forgetVerificationCode);

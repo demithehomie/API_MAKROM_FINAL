@@ -4,8 +4,9 @@ export class AuthConfirmSMSDto {
     
     @MaxLength(5)
     @IsNumberString()
-    SMSVerificationCode: string;
+    verificationCode: string;
 
-    @IsString()
-    mobilePhone: string;
+
+//     @IsString()
+//     mobilePhone: string;
 }
