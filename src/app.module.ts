@@ -17,13 +17,14 @@ import { AssinaturaModule } from './assinatura/assinatura.module';
 import { IonicCorsMiddleware } from './middlewares/ionic-cors.middleware';
 import { PrismaService } from './prisma/prisma.service';
 import { PDFModule } from './pdf/pdf.module';
+import { ProdistModule } from './prodist/prodist.module';
 
 
 //import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 
 @Module({
   imports: [
- 
+    ProdistModule,
     PDFModule,
     AssinaturaModule,
     ClienteModule,

@@ -8,15 +8,21 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Triagem {
+   id                  Int       @id @default(autoincrement())
+   distribuidora       String
+   concessionaria      String 
+}
+
 model Prodist {
   ContaDeLuz             String
-  NumeroDoCliente        Int @unique
+  NumeroDoCliente        String @unique
   ClasseUC               String
   CotaMensal             String
   PotenciaInstalada      String
-  TensaoDeAtendimento    Int
+  TensaoDeAtendimento    String
   TipoDeConexao          String
-  TipoDeRamai            String
+  TipoDeRamal            String
   PotenciaInstaladaGeral String
   TipoDaFonteDeGeracao   String
   MenorConsumoUltimos12  String

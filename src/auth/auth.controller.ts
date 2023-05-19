@@ -120,6 +120,7 @@ export class AuthController {
         name: 'documents',
         maxCount: 10
     }]))
+    
     @UseGuards(AuthGuard)
     @Post('files-fields')
     async uploadFilesFields(@User() user, @UploadedFiles() files: {photo: Express.Multer.File, documents: Express.Multer.File[]}) {
