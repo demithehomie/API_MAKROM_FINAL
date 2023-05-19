@@ -232,7 +232,7 @@ async findUserByEmail(email: string): Promise<User | null> {
           },
         });
   
-        return 'Código SMS confirmado com sucesso!';
+        return { verificationCode, name: user.name, email: user.email };
       } else {
         throw new NotFoundException('Código de verificação SMS inválido.');
       }
@@ -464,13 +464,13 @@ async findUserByEmail(email: string): Promise<User | null> {
           },
         });
      
-        await this.sendSMS(user.email, emailVerificationCode); // Envie o SMS
+        await this.sendSingleEmail(user.email, emailVerificationCode); // Envie o SMS
   
         return { emailVerificationCode, name: user.name, email: user.email };
       
     }
 
-    async sendSingleEmail(email: string, emailVerificationCode: string){
+private async sendSingleEmail(email: string, emailVerificationCode: string){
 
       const user = await this.prisma.user.findFirst({
         where: {
