@@ -131,6 +131,8 @@
               }
           });
 
+         
+
           if (!user) {
               throw new UnauthorizedException('E-mail e/ou senha incorretos.');
           }
@@ -139,7 +141,36 @@
               throw new UnauthorizedException('E-mail e/ou senha incorretos.');
           }
 
-          return this.createToken(user);
+          return {
+            token: this.createToken(user),
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            cpfCnpj: user.cpfCnpj, 
+            mobilePhone: user.mobilePhone,
+            phone: user.phone,
+            company: user.company,
+            postalCode: user.postalCode,
+            address: user.address,
+            state: user.state,
+            province: user.province,
+            city: user.city,
+            addressNumber: user.addressNumber,
+            complement: user.complement,
+            municipalInscription: user.municipalInscription,
+            stateInscription: user.stateInscription,
+            additionalEmails: user.additionalEmails,
+            observations: user.observations,
+            birthAt: user.birthAt,
+            role: user.role,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+
+            emailVerificationCode: user.emailVerificationCode,
+            SMSVerificarionCode: user.SMSVerificationCode,
+
+            //customer_id: client.customer_id
+          } 
 
       }
 

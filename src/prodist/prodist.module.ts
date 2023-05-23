@@ -6,6 +6,7 @@ import { PrismaModule } from "src/prisma/prisma.module";
 import { AuthModule } from "src/auth/auth.module";
 import { ProdistService } from "./prodist.service";
 import { UserService } from "src/user/user.service";
+import { PDFService } from "src/pdf/pdf.service";
 
 @Module({
     imports: [
@@ -13,7 +14,7 @@ import { UserService } from "src/user/user.service";
         forwardRef(() => AuthModule)
     ],
     controllers: [ProdistController],
-    providers: [FileService, ProdistService, UserService],
+    providers: [FileService, ProdistService, UserService, PDFService],
     exports: [FileService, ProdistService, UserService]
 })
 export class ProdistModule {}
