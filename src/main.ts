@@ -47,8 +47,8 @@ async function bootstrap() {
 
   app.use(
     cors({
-      origin: ['*', 'https://coopeere-eco.web.app'],
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      origin: ['*', 'https://coopeere-eco.web.app', 'https://coopeere-eco.web.app/' ],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     }),
   );
