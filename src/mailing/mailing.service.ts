@@ -16,8 +16,8 @@ export class MailingService {
   private async setTransport() {
     const OAuth2 = google.auth.OAuth2;
     const oauth2Client = new OAuth2(
-      this.configService.get('CLIENT_ID'),
-      this.configService.get('CLIENT_SECRET'),
+      this.configService.get('clientID'),
+      this.configService.get('clientSecret'),
       'https://developers.google.com/oauthplayground',
     );
    
@@ -40,8 +40,8 @@ export class MailingService {
         auth: {
           type: 'OAuth2',
           user: this.configService.get('EMAIL'),
-          clientId: this.configService.get('CLIENT_ID'),
-          clientSecret: this.configService.get('CLIENT_SECRET'),
+          clientId: this.configService.get('clientID'),
+          clientSecret: this.configService.get('clientSecret'),
           accessToken,
         },
         tls: {

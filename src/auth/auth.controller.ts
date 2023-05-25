@@ -1,4 +1,4 @@
-import { GoogleOAuthGuard } from "./google/google-oauth.guard"
+//import { GoogleOAuthGuard } from "./google/google-oauth.guard"
 import { Controller, Request, Post, Body, UseGuards, UseInterceptors, BadRequestException, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, UnauthorizedException } from "@nestjs/common";
 import { Get, Param, UploadedFile, UploadedFiles } from "@nestjs/common/decorators";
 import { FileInterceptor, FilesInterceptor, FileFieldsInterceptor } from "@nestjs/platform-express";
@@ -127,14 +127,14 @@ export class AuthController {
         return files;
     }
 
-    @Get('google')
-    @UseGuards(GoogleOAuthGuard)
-    async googleAuth(@Request() req) {}
+    // @Get('google')
+    // @UseGuards(GoogleOAuthGuard)
+    // async googleAuth(@Request() req) {}
   
-    @Get('google-redirect')
-    @UseGuards(GoogleOAuthGuard)
-    googleAuthRedirect(@Request() req) {
-      return this.authService.googleLogin(req);
-    }
+    // @Get('google-redirect')
+    // @UseGuards(GoogleOAuthGuard)
+    // googleAuthRedirect(@Request() req) {
+    //   return this.authService.googleLogin(req);
+    // }
 
 }
