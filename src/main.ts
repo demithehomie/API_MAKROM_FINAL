@@ -19,7 +19,7 @@ export const createNestServer = async (expressInstance) => {
 
   app.enableCors({
     origin: [
-      '*','https://coopeere-frontend.web.app', 'https://coopeere-frontend.web.app/'
+      '*','https://coopeere-eco.web.app', 'https://coopeere-eco.web.app/'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
@@ -47,7 +47,7 @@ async function bootstrap() {
 
   app.use(
     cors({
-      origin: ['*', 'https://coopeere-frontend.web.app'],
+      origin: ['*', 'https://coopeere-eco.web.app'],
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     }),
