@@ -47,8 +47,7 @@ export class UsuariosController {
     @Param('NumeroDoCliente') NumeroDoCliente: string
     
     ) {
-   // const user: UsuarioDto
-   //const id = user.id
+ 
     const usuarioLogadoId = id; // Supondo que você tenha a informação do usuário logado no objeto request
     const usuario = await this.usersService.obterUsuario(usuarioLogadoId);
 
@@ -64,7 +63,7 @@ export class UsuariosController {
     doc.moveDown();
     doc.font('Helvetica').fontSize(16).text(`Código da UC: ${prodistN.NumeroDoCliente}`, 50, 150, { width: 500 });
     doc.moveDown();
-    doc.font('Helvetica').fontSize(16).text(`Classe: `, 50, 200, { width: 500 });
+    doc.font('Helvetica').fontSize(16).text(`Classe: ${prodistN.ClasseUC}`, 50, 200, { width: 500 });
     doc.moveDown();
     doc.font('Helvetica').fontSize(16).text(`Rua/AV:  ${usuario.address}`, 50, 250, { width: 500 });
     doc.moveDown();

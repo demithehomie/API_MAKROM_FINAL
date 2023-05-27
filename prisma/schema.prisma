@@ -39,7 +39,7 @@ model User {
   id                  Int       @id @default(autoincrement())
   name                String    @db.VarChar(63)
   email               String    @db.VarChar(127) @unique
-  password            String    @db.VarChar(127)
+  password            String    @db.VarChar(255)
   cpfCnpj             String    @db.VarChar(127)
   mobilePhone         String    @default("mobilePhone") @db.VarChar(12)
   phone               String    @db.VarChar(12)
@@ -53,7 +53,7 @@ model User {
   complement          String    @default("complement") @db.VarChar(250)
   municipalInscription String    @default("municipalinscription") @db.VarChar(50)
   stateInscription    String    @default("stateinscription") @db.VarChar(50)
-  additionalEmails    String    @default("additionalEmails") @db.VarChar(50)
+  additionalEmails    String    @default("additionalEmails") @db.VarChar(250)
   observations        String    @default("observations") @db.VarChar(250)
   birthAt             DateTime? @db.Timestamp(0)
   role                Int
