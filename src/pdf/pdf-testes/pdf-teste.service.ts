@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prodist, User } from '@prisma/client'; // Substitua pelo caminho correto para o seu modelo "usuarios"
+import { TriagemProdist, User } from '@prisma/client'; // Substitua pelo caminho correto para o seu modelo "usuarios"
 
 @Injectable()
 export class UsuariosService {
@@ -14,7 +14,7 @@ export class UsuariosService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  async obterNumeroDoUsuarioProdist(NumeroDoCliente: string): Promise<Prodist> {
+  async obterNumeroDoUsuarioProdist(NumeroDoCliente: string): Promise<TriagemProdist> {
     return this.prisma.prodist.findUnique({ where: {NumeroDoCliente}})
   }
 }

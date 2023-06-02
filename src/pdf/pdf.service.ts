@@ -1,4 +1,4 @@
-  import { Prodist, User } from '@prisma/client';
+  import { TriagemProdist, User } from '@prisma/client';
   import * as PDFDocument from 'pdfkit';
   import { AuthService } from 'src/auth/auth.service';
   import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +11,7 @@
     
     constructor( 
       private prodistService: ProdistService, 
-      private prodist: Prodist,  
+      private prodist: TriagemProdist,  
       private prismaService: PrismaService,
       private userService: UserService,
       private authService: AuthService,

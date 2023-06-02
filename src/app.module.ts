@@ -19,12 +19,14 @@ import { PrismaService } from './prisma/prisma.service';
 import { PDFModule } from './pdf/pdf.module';
 import { ProdistModule } from './prodist/prodist.module';
 import { UsuariosModule } from './pdf/pdf-testes/pdf-teste.module';
+import { TriagemModule } from './triagem/triagem.module';
 
 
 //import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 
 @Module({
   imports: [
+    TriagemModule,
     UsuariosModule,
     ProdistModule,
     PDFModule,

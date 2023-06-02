@@ -8,15 +8,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Triagem {
-   id                  Int       @id @default(autoincrement())
-   distribuidora       String
-   concessionaria      String 
-}
 
-model Prodist {
+
+model TriagemProdist {
+  id                     Int      @id @default(autoincrement())
+  Cooperado              User     @relation("UserToProdist", fields: [idCooperado], references: [id])
+  idCooperado            Int  @default(autoincrement())
+  
   ContaDeLuz             String
-  NumeroDoCliente        String @unique
+  NumeroDoCliente        String   @unique
   ClasseUC               String
   CotaMensal             String
   PotenciaInstalada      String
@@ -27,6 +27,10 @@ model Prodist {
   TipoDaFonteDeGeracao   String
   MenorConsumoUltimos12  String
   MaiorConsumoUltimos12  String
+
+  ehTitular              Boolean
+  operadora_concessionaria         String 
+  ehCooperadoApoiador    Boolean
 }
 
 model Cliente {
@@ -36,35 +40,36 @@ model Cliente {
 }
 
 model User {
-  id                  Int       @id @default(autoincrement())
-  name                String    @db.VarChar(63)
-  email               String    @db.VarChar(127) @unique
-  password            String    @db.VarChar(255)
-  cpfCnpj             String    @db.VarChar(127)
-  mobilePhone         String    @default("mobilePhone") @db.VarChar(12)
-  phone               String    @db.VarChar(12)
-  company             String    @db.VarChar(50)
-  postalCode          String    @default("postalCode") @db.VarChar(9)
-  address             String    @db.VarChar(250)
-  state               String    @db.VarChar(250)
-  province            String    @default("province") @db.VarChar(250)
-  city                String    @db.VarChar(50)
-  addressNumber       String    @db.VarChar(5)
-  complement          String    @default("complement") @db.VarChar(250)
-  municipalInscription String    @default("municipalinscription") @db.VarChar(50)
-  stateInscription    String    @default("stateinscription") @db.VarChar(50)
-  additionalEmails    String    @default("additionalEmails") @db.VarChar(250)
-  observations        String    @default("observations") @db.VarChar(250)
-  birthAt             DateTime? @db.Timestamp(0)
-  role                Int
-  createdAt           DateTime  @default(now()) @db.Timestamp(0)
-  updatedAt           DateTime  @default(now()) @db.Timestamp(0)
+  id                     Int       @id @default(autoincrement())
+  name                   String    @db.VarChar(63)
+  email                  String    @db.VarChar(127) @unique
+  password               String    @db.VarChar(255)
+  cpfCnpj                String    @db.VarChar(127)
+  mobilePhone            String    @default("mobilePhone") @db.VarChar(12)
+  phone                  String    @db.VarChar(12)
+  company                String    @db.VarChar(50)
+  postalCode             String    @default("postalCode") @db.VarChar(9)
+  address                String    @db.VarChar(250)
+  state                  String    @db.VarChar(250)
+  province               String    @default("province") @db.VarChar(250)
+  city                   String    @db.VarChar(50)
+  addressNumber          String    @db.VarChar(5)
+  complement             String    @default("complement") @db.VarChar(250)
+  municipalInscription   String    @default("municipalinscription") @db.VarChar(50)
+  stateInscription       String    @default("stateinscription") @db.VarChar(50)
+  additionalEmails       String    @default("additionalEmails") @db.VarChar(250)
+  observations           String    @default("observations") @db.VarChar(250)
+  birthAt                DateTime? @db.Timestamp(0)
+  role                   Int
+  createdAt              DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt              DateTime  @default(now()) @db.Timestamp(0)
+  isSMSVerified          String    @default("false")
+  emailVerificationCode  String    @default("12345") @db.VarChar(5) 
+  SMSVerificationCode    String    @default("12345") @db.VarChar(5)
+  forgetVerificationCode String    @default("12345") @db.VarChar(5)
+  isCooperadoApoiador    Boolean   @default(false)
 
-  isSMSVerified       String    @default("false")
-  emailVerificationCode String @default("12345") @db.VarChar(5) 
-  SMSVerificationCode String @default("12345") @db.VarChar(5)
-  forgetVerificationCode String @default("12345") @db.VarChar(5) 
+  Cooperado TriagemProdist[] @relation("UserToProdist")
 
   @@map("users")
 }
-
