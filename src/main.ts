@@ -19,7 +19,15 @@ export const createNestServer = async (expressInstance) => {
 
   app.enableCors({
     origin: [
-      '*','https://coopeere-eco.web.app', 'https://coopeere-eco.web.app/' , 'http://localhost:8100', 'http://localhost:8100/' , 'http://localhost:8101', 'http://localhost:8101/'
+      '*',
+      'https://coopeere-eco.web.app', 
+      'https://coopeere-eco.web.app/' , 
+      'http://localhost:8100', 
+      'http://localhost:8100/' , 
+      'http://localhost:8101', 
+      'http://localhost:8101/', 
+      'https://grandfinale.onrender.com/auth/get-by-email', 
+      'https://viacep.com.br/ws/undefined/json/', 
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
