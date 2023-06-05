@@ -112,15 +112,27 @@
       }
 
       // No seu UserService
-  async findUserByEmail(email: string): Promise<User | null> {
-    try {
-      const user = await this.prisma.user.findUnique({ where: { email } });
-      return user;
-    } catch (error) {
-      // Lidar com o erro, como registrar em um arquivo de log ou retornar uma mensagem de erro adequada
-      throw new Error('Error finding user by email');
+      async findUserByEmail(email: string): Promise<User | null> {
+        try {
+          const user = await this.prisma.user.findUnique({ where: { email } });
+          return user;
+        } catch (error) {
+          // Lidar com o erro, como registrar em um arquivo de log ou retornar `null` ou uma exceção personalizada
+          console.error(error);
+          return null; // Retornar `null` ou lançar uma exceção personalizada, conforme necessário
+        }
+      }
+      
+
+  async exists(id: number) {
+    if (!(await this.prisma.user.count({
+        where: {
+            id
+        }
+    }))) {
+        throw new NotFoundException(`O usuário ${id} não existe.`);
     }
-  }
+}
 
 
       async login(email:string, password:string) {

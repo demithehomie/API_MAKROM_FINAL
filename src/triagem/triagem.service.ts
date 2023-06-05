@@ -21,9 +21,7 @@ export class TriagemService {
             ehCooperadoApoiador = false
         }
 
-        return this.prisma.triagemprodist.create({
-            data,
-        });
+        return this.prisma.triagemprodist.create({data,});
 
    
     }

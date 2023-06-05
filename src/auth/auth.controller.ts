@@ -1,5 +1,5 @@
 //import { GoogleOAuthGuard } from "./google/google-oauth.guard"
-import { Controller, Request, Post, Body, UseGuards, UseInterceptors, BadRequestException, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, UnauthorizedException } from "@nestjs/common";
+import { Controller, Request, Post, Body, UseGuards, UseInterceptors, NotFoundException, BadRequestException, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, UnauthorizedException } from "@nestjs/common";
 import { Get, Param, UploadedFile, UploadedFiles } from "@nestjs/common/decorators";
 import { FileInterceptor, FilesInterceptor, FileFieldsInterceptor } from "@nestjs/platform-express";
 import { User } from "src/decorators/user.decorator";
@@ -17,8 +17,9 @@ import { AuthConfirmSMSDto } from "./dto/auth-confirm-sms.dto";
 import { AuthenticateDTO } from "./dto/authenticate.dto";
 import { AuthSendEmailDTO } from "./dto/auth-send-email.dto copy";
 import { MailerService } from "@nestjs-modules/mailer";
+import { ParamId } from "src/decorators/param-id.decorator";
 
-
+// 'https://grandfinale.onrender.com';
 
 
 @Controller('auth')
@@ -32,6 +33,18 @@ export class AuthController {
         private readonly fileService: FileService,
         private readonly mailerService: MailerService
     ){}
+    
+
+    //////////////
+    @Get('/get-by-email/:email')
+    async obterUsuarioPorEmail(@Param('email') email: string) {
+      const user = await this.authService.findUserByEmail(email);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;  
+    }
+    
 
     @Post('login')
     async login(@Body() {email, password}: AuthLoginDTO) {
