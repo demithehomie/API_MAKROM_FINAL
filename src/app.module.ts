@@ -18,7 +18,7 @@ import { IonicCorsMiddleware } from './middlewares/ionic-cors.middleware';
 import { PrismaService } from './prisma/prisma.service';
 import { PDFModule } from './pdf/pdf.module';
 import { ProdistModule } from './prodist/prodist.module';
-import { UsuariosModule } from './pdf/pdf-testes/pdf-teste.module';
+import { PdfFinalModule } from './pdf/pdf-finals/pdf-final.module';
 import { TriagemModule } from './triagem/triagem.module';
 
 
@@ -27,7 +27,7 @@ import { TriagemModule } from './triagem/triagem.module';
 @Module({
   imports: [
     TriagemModule,
-    UsuariosModule,
+    PdfFinalModule,
     ProdistModule,
     PDFModule,
     AssinaturaModule,

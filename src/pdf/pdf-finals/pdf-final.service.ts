@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { TriagemProdist, User } from '@prisma/client'; // Substitua pelo caminho correto para o seu modelo "usuarios"
 
 @Injectable()
-export class UsuariosService {
+export class PdfFinalService {
   constructor(private readonly prisma: PrismaService) {} // Certifique-se de importar o PrismaService corretamente
 
   async obterUsuarios(): Promise<User[]> {

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Req, Res, UseGuards } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import { UsuariosService } from './pdf-teste.service';
+import { PdfFinalService } from './pdf-final.service';
 import * as PDFKit from 'pdfkit';
 import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -10,8 +10,8 @@ import { NumeroDoProdistDto } from './dto/prodist.dto';
 import { EmitirProdistDto } from './dto/emitir-prodist.dto';
 
 @Controller('usuarios')
-export class UsuariosController {
-  constructor(private readonly usersService: UsuariosService) {}
+export class PdfFinalController {
+  constructor(private readonly usersService: PdfFinalService) {}
 
   @Get('pdf-all')
   async gerarPDFAll(@Res() response: Response) {
@@ -28,6 +28,8 @@ export class UsuariosController {
       doc.text('-------------------');
     });
 
+    /////////// opa opa 
+
     // Define o tipo de conteúdo do cabeçalho de resposta como PDF
     response.setHeader('Content-Type', 'application/pdf');
 
@@ -43,7 +45,7 @@ export class UsuariosController {
   //@UseGuards(AuthGuard)
   async gerarPDFSingle(
     @Res() response: Response, 
-    @ParamId('id') id: number,
+    @ParamId('id') id: number, //
     @Param('NumeroDoCliente') NumeroDoCliente: string
     
     ) {
