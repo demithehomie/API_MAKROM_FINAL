@@ -7,6 +7,20 @@ import { PrismaService } from "src/prisma/prisma.service";
 export class PostService {
     constructor(private readonly prisma: PrismaService) {}
 
+
+    async updatePost(id: number, data: any) {
+        return this.prisma.post.update({
+            where: { id: id },
+            data: data
+        });
+    }
+
+    async deletePost(id: number) {
+        return this.prisma.post.delete({
+            where: { id: id }
+        });
+    }
+    
     async getAllPosts() {
         return this.prisma.post.findMany();
     }
