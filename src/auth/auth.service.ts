@@ -17,7 +17,10 @@
 
       private issuer = 'login';
       private audience = 'users';
-
+      private randomCodeSignUp: string;
+      private randomCodeSMS: string;
+      private randomCodeResend: string;
+      private randomCodeReset: string;
       
 //
       constructor(
@@ -27,7 +30,38 @@
           private readonly prisma: PrismaService,
           private readonly userService: UserService,
           private readonly mailer: MailerService
-      ) {}
+      ) {
+
+
+        this.randomCodeSignUp = this.generateRandomCode();
+        this.randomCodeSMS = this.generateRandomCode();
+        this.randomCodeResend = this.generateRandomCode();
+        this.randomCodeReset = this.generateRandomCode();
+
+        setInterval(() => {
+          this.randomCodeSignUp = this.generateRandomCode();
+          console.log("SignUp Code:", this.randomCodeSignUp);
+      }, 100000);
+
+      // Generate a new code for SMS every 10 seconds
+      setInterval(() => {
+          this.randomCodeSMS = this.generateRandomCode();
+          console.log("SMS Code:", this.randomCodeSMS);
+      }, 100000);
+
+      // Generate a new code for Resend every 10 seconds
+      setInterval(() => {
+          this.randomCodeResend = this.generateRandomCode();
+          console.log("Resend Code:", this.randomCodeResend);
+      }, 100000);
+
+      // Generate a new code for Reset every 10 seconds
+      setInterval(() => {
+          this.randomCodeReset = this.generateRandomCode();
+          console.log("Reset Code:", this.randomCodeReset);
+      }, 100000);
+
+      }
 
   
       private async setTransport() {
@@ -199,7 +233,7 @@
           throw new UnauthorizedException('Celular está incorreto.');
         }
     
-        const SMSVerificationCode = this.generateRandomNumericCodeforSMS();
+        const SMSVerificationCode = this.randomCodeSMS
     
         await this.prisma.user.update({
           where: {
@@ -344,7 +378,7 @@
 
 
             // Gerar um código numérico aleatório de seis dígitos
-      const forgetVerificationCode = this.generateRandomNumericCodeReset();
+      const forgetVerificationCode = this.randomCodeReset;
 
       // Armazenar o código no banco de dados para o usuário correspondente
       await this.prisma.user.update({
@@ -432,7 +466,7 @@
             },
             data: {
               
-              emailVerificationCode: undefined   // Limpar o código de verificação após a redefinição da senha
+              emailVerificationCode  // Limpar o código de verificação após a redefinição da senha
             },
           });
       
@@ -444,7 +478,9 @@
 
         const user = await this.userService.create(data);
 
-        const emailVerificationCode =  this.generateRandomNumericCodeSignUp() //this.createToken(user);
+        const emailVerificationCode =  this.randomCodeSignUp; //this.createToken(user);
+        
+    console.log("Generated code:", emailVerificationCode); 
 
         await this.prisma.user.update({
           where: {
@@ -454,7 +490,9 @@
             emailVerificationCode,
           },
         });
-      
+
+          console.log("Updated DB with code:", emailVerificationCode);
+          
         await this.setTransport();
     
         
@@ -496,7 +534,7 @@
         }
     
       
-          const emailVerificationCode =  this.generateRandomNumericCodeResend() //this.createToken(user);
+          const emailVerificationCode =  this.randomCodeSignUp //this.createToken(user);
 
           await this.prisma.user.update({
             where: {
@@ -553,28 +591,26 @@
       //   };
       // }
 
-      generateRandomNumericCodeSignUp(): string {
+      private generateRandomCode(): string {
         const randomNum = Math.floor(Math.random() * 100000);
-        const code = randomNum.toString();
-        return code.padStart(5  , '0');
-      }
+        return randomNum.toString().padStart(5, '0');
+    }
 
-      generateRandomNumericCodeforSMS(): string {
-        const randomNum = Math.floor(Math.random() * 100000);
-        const code = randomNum.toString();
-        return code.padStart(5  , '0');
-      }
+    generateRandomNumericCodeSignUp(): string {
+        return this.randomCodeSignUp;
+    }
 
-      generateRandomNumericCodeResend(): string {
-        const randomNum = Math.floor(Math.random() * 100000);
-        const code = randomNum.toString();
-        return code.padStart(5  , '0');
-      }
+    generateRandomNumericCodeforSMS(): string {
+        return this.randomCodeSMS;
+    }
 
-      generateRandomNumericCodeReset(): string {
-        const randomNum = Math.floor(Math.random() * 100000);
-        const code = randomNum.toString();
-        return code.padStart(5  , '0');
-      }
+    generateRandomNumericCodeResend(): string {
+        return this.randomCodeResend;
+    }
+
+    generateRandomNumericCodeReset(): string {
+        return this.randomCodeReset;
+    }
+      
 
       }

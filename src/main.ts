@@ -7,7 +7,7 @@ import * as cors from 'cors';
 
 import {ExpressAdapter, NestExpressApplication} from '@nestjs/platform-express';
 import * as express from 'express';
-import * as functions from 'firebase-functions';
+//import * as functions from 'firebase-functions';
 
 const server: express.Express = express();
 

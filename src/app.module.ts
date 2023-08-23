@@ -20,12 +20,14 @@ import { PDFModule } from './pdf/pdf.module';
 import { ProdistModule } from './prodist/prodist.module';
 import { PdfFinalModule } from './pdf/pdf-finals/pdf-final.module';
 import { TriagemModule } from './triagem/triagem.module';
+import { PostModule } from './posts/posts.module';
 
 
 //import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 
 @Module({
   imports: [
+    PostModule,
     TriagemModule,
     PdfFinalModule,
     ProdistModule,

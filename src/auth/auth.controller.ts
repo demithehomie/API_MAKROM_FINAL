@@ -19,7 +19,7 @@ import { AuthSendEmailDTO } from "./dto/auth-send-email.dto copy";
 import { MailerService } from "@nestjs-modules/mailer";
 import { ParamId } from "src/decorators/param-id.decorator";
 
-// 'https://grandfinale.onrender.com';
+// 'https://grandfinale.onrender.com'; //
 
 
 @Controller('auth')

@@ -39,6 +39,15 @@ model Cliente {
   cpfCnpj             String  @unique @default("cpfCnpj")  @db.VarChar(127)
 }
 
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt     @map("updated_at")
+}
+
 model User {
   id                     Int       @id @default(autoincrement())
   name                   String    @db.VarChar(63)
