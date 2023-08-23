@@ -7,6 +7,17 @@ import { PrismaService } from "src/prisma/prisma.service";
 export class PostService {
     constructor(private readonly prisma: PrismaService) {}
 
+    async getAllPosts() {
+        return this.prisma.post.findMany();
+    }
+
+    async getPostById(id: number) {
+        return this.prisma.post.findUnique({
+            where: { id: id }
+        });
+    }
+
+
     async createPost(data: CreatePostDTO, /* userId: number */) {
         const post = await this.prisma.post.create({
             data: {
