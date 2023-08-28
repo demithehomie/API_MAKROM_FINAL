@@ -504,7 +504,7 @@
             subject: 'Bem-Vindo a Coopeere', // Subject line
             template: 'confirm',
             context: {
-                code:  user.emailVerificationCode,
+                code:  emailVerificationCode,
             }
           })
           .then((success) => {
